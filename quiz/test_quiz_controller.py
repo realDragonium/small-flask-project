@@ -28,7 +28,7 @@ class TestQuizController(unittest.TestCase):
         new_quiz: Quiz = self.create_quiz()
         question = create_question()
         self.controller.add_question_to_quiz(new_quiz.id, question)
-        post_insert_quiz = self.repo.get_newest_quiz()
+        post_insert_quiz = self.repo.get_quiz(new_quiz.id)
         self.assertEqual(1, len(post_insert_quiz.questions))
 
     def test_get_correct_answer_for_question(self):

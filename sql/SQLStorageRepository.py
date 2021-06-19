@@ -12,13 +12,16 @@ class SQLStorageRepository(StorageRepository):
     def __init__(self):
         init_db()
 
+    def get_sql_quiz(self, quiz_id: uuid.UUID) -> SQLQuiz:
+        return SQLQuiz.query.filter(SQLQuiz.id == quiz_id).first()
+
     def save_quiz(self, quiz: Quiz):
         sql_quiz: SQLQuiz = quiz_to_sql_quiz(quiz)
         db_session.add(sql_quiz)
         db_session.commit()
 
-    def get_quiz(self, quiz_id: uuid) -> Quiz:
-        sql_quiz: SQLQuiz = SQLQuiz.query.filter(SQLQuiz.id == quiz_id).first()
+    def get_quiz(self, quiz_id: uuid.UUID) -> Quiz:
+        sql_quiz: SQLQuiz = self.get_sql_quiz(quiz_id)
         return sql_quiz_to_quiz(sql_quiz)
 
     def get_question(self, question_id: uuid.UUID) -> Question:
@@ -26,29 +29,36 @@ class SQLStorageRepository(StorageRepository):
         return sql_question_to_question(sql_question)
 
     def update_quiz(self, quiz: Quiz):
-        sql_quiz: SQLQuiz = quiz_to_sql_quiz(quiz)
+        old_sql_quiz: SQLQuiz = self.get_sql_quiz(quiz.id)
+        old_sql_quiz.name = quiz.name
+        sql_questions: List[SQLQuestion] = []
+        for question in quiz.questions:
+            sql_question: SQLQuestion = question_to_sql_question(question, quiz.id)
+            sql_questions.append(sql_question)
+        old_sql_quiz.questions = sql_questions
+        db_session.commit()
 
     def get_quizzes(self, offset: int, amount: int) -> List[Quiz]:
-        pass
-
-    def get_newest_quiz(self) -> Quiz:
-        sql_quiz: SQLQuiz = SQLQuestion.query.all()[0]
-        return sql_quiz_to_quiz(sql_quiz)
-
+        sql_quizzes: List[SQLQuiz] = SQLQuiz.query.limit(amount).offset(offset).all()
+        quizzes: List[Quiz] = []
+        for sql_quiz in sql_quizzes:
+            quiz: Quiz = sql_quiz_to_quiz(sql_quiz)
+            quizzes.append(quiz)
+        return quizzes
 
 
 def quiz_to_sql_quiz(quiz: Quiz) -> SQLQuiz:
-    questions: List[SQLQuestion] = [question_to_sql_question(question) for question in quiz.questions]
+    questions: List[SQLQuestion] = [question_to_sql_question(question, quiz.id) for question in quiz.questions]
     return SQLQuiz(quiz.id, quiz.name, questions)
 
 
-def question_to_sql_question(question: Question) -> SQLQuestion:
-    answers: List[SQLAnswerOption] = [answer_option_to_sql_answer_option(option) for option in question.answer_options]
-    return SQLQuestion(question.id, question.text, answers)
+def question_to_sql_question(question: Question, quiz_id: uuid.UUID) -> SQLQuestion:
+    answers: List[SQLAnswerOption] = [answer_option_to_sql_answer_option(option, question.id) for option in question.answer_options]
+    return SQLQuestion(question.id, question.text, answers, quiz_id)
 
 
-def answer_option_to_sql_answer_option(answer_option: AnswerOption) -> SQLAnswerOption:
-    return SQLAnswerOption(answer_option.id, answer_option.text, answer_option.is_correct)
+def answer_option_to_sql_answer_option(answer_option: AnswerOption, question_id: uuid.UUID) -> SQLAnswerOption:
+    return SQLAnswerOption(answer_option.id, answer_option.text, answer_option.is_correct, question_id)
 
 
 def sql_quiz_to_quiz(quiz: SQLQuiz) -> Quiz:

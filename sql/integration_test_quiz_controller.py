@@ -15,9 +15,9 @@ class TestQuizController(unittest.TestCase):
         self.controller: QuizController = QuizController(self.repo)
 
     def tearDown(self) -> None:
-        SQLQuiz.query.delete()
-        SQLQuestion.query.delete()
         SQLAnswerOption.query.delete()
+        SQLQuestion.query.delete()
+        SQLQuiz.query.delete()
 
     def create_quiz(self, name: str = "Best quiz") -> Quiz:
         return self.controller.create_quiz(name)
@@ -34,13 +34,13 @@ class TestQuizController(unittest.TestCase):
         new_quiz: Quiz = self.create_quiz()
         question = create_question()
         self.controller.add_question_to_quiz(new_quiz.id, question)
-        post_insert_quiz = self.repo.get_newest_quiz()
+        post_insert_quiz = self.repo.get_quiz(new_quiz.id)
         self.assertEqual(1, len(post_insert_quiz.questions))
 
     def test_sql_get_correct_answer_for_question(self):
         new_quiz: Quiz = self.create_quiz()
         question: Question = create_question()
-        new_quiz.add_question(question)
+        self.controller.add_question_to_quiz(new_quiz.id, question)
 
         correct_answers = self.controller.get_correct_answer_for_question(question.id)
         self.assertEqual(len(correct_answers), 1)
@@ -50,7 +50,7 @@ class TestQuizController(unittest.TestCase):
         question: Question = create_question()
         for answer_option in question.answer_options:
             answer_option.is_correct = True
-        new_quiz.add_question(question)
+        self.controller.add_question_to_quiz(new_quiz.id, question)
 
         correct_answers = self.controller.get_correct_answer_for_question(question.id)
         self.assertEqual(len(correct_answers), 4)
