@@ -5,8 +5,12 @@ name = "pypi"
 
 [packages]
 flask = "*"
+flask-restful = "*"
+flask-sqlalchemy = "*"
+sqlalchemy = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.8"
+python_version = "3"

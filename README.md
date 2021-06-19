@@ -1,8 +1,34 @@
 # small-flask-project
 
+## How to run
+
+### Production
+To run production of this use: 
+```
+docker-compose up production
+```
+
+### Development
+To run development of this use: 
+```
+docker-compose up development 
+```
+
+### Unit tests
+To run the unit tests without any external dependencies: 
+```
+docker-compose run unit
+```
+
+### Integration tests
+To run the integration tests which has the database as external dependency: 
+```
+docker-compose run integration
+```
 
 
-### Okay so I wanna create a small quiz websites: 
+##What is this?
+This is a small quiz websites where you can do some simple things. Here are some of my thought about the features when I started making it: 
 - So you need to be able to create quizzes which contain questions which each have multiple answers and one of them is the right one. 
 - So quizzes need to be made
 - The quizzes need to be able to retrieve without the right answer
@@ -11,10 +37,3 @@
 - We should also log it when someone finished a quiz
 - So we also kinda need accounts
 
-
-
-## Quiz
-
-- Create
-- Update
-- 

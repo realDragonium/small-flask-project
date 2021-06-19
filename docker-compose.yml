@@ -1,0 +1,45 @@
+version: "3.9"
+
+
+services:
+  production:
+    build: .
+    ports:
+      - 5000:5000
+    environment:
+      MODE: "production"
+      ENV: "production"
+
+  development:
+    build: .
+    ports:
+      - 5000:5000
+    environment:
+      MODE: "development"
+      ENV: "development"
+
+  unit:
+    build:
+      context: .
+      dockerfile: unittest.dockerfile
+    environment:
+      MODE: "unit"
+      DATABASE: "MEMORY"
+
+  integration:
+    build:
+      context: .
+      dockerfile: unittest.dockerfile
+    depends_on:
+      - integration_db
+    environment:
+      MODE: "integration"
+      DATABASE: "SQL"
+
+  integration_db:
+    image: postgres:13.3
+    ports:
+      - 10432:5432
+    environment:
+      POSTGRES_PASSWORD: 'CHANGE_ME'
+      POSTGRES_USER: 'DONT_LEAVE_ME_ALONE'

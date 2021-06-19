@@ -1,0 +1,7 @@
+{
+  "ENV": "unit",
+  "LISTEN_TO": "0.0.0.0",
+  "APPLICATION_ROOT": "/api",
+  "STORAGE": "MEMORY",
+  "DEBUG": false
+}

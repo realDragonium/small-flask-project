@@ -1,15 +1,13 @@
 import uuid
 from typing import List
 
+from quiz.StorageRepository import StorageRepository
 from quiz.models import Quiz, Question, AnswerOption
-from quiz.use_cases.StorageRepository import StorageRepository
 
 default_quiz_amount: int = 25
 
 
 class QuizController:
-
-    repository: StorageRepository
 
     def __init__(self, repo: StorageRepository):
         self.repository = repo
@@ -22,7 +20,7 @@ class QuizController:
     def add_question_to_quiz(self, quiz_id: uuid.UUID, question: Question) -> None:
         quiz = self.repository.get_quiz(quiz_id)
         quiz.add_question(question)
-        self.repository.save_quiz(quiz)
+        self.repository.update_quiz(quiz)
 
     def get_correct_answer_for_question(self, question_id: uuid.UUID) -> List[AnswerOption]:
         question = self.repository.get_question(question_id)

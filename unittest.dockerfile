@@ -7,4 +7,4 @@ RUN pip install pipenv
 
 RUN pipenv install --deploy --ignore-pipfile
 
-CMD ["pipenv", "run", "python", "app.py"]
+CMD ["python", "-m", "unittest", "discover", "-v"]

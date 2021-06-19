@@ -8,6 +8,12 @@ class StorageRepository:
     def save_quiz(self, quiz: Quiz):
         pass
 
+    def get_newest_quiz(self) -> Quiz:
+        pass
+
+    def update_quiz(self, quiz: Quiz):
+        pass
+
     def get_quiz(self, quiz_id: uuid) -> Quiz:
         pass
 

@@ -1,8 +1,8 @@
 import uuid
 from typing import Dict, List
 
+from quiz.StorageRepository import StorageRepository
 from quiz.models import Quiz, Question
-from quiz.use_cases.StorageRepository import StorageRepository
 
 
 class CacheStorageRepository(StorageRepository):
