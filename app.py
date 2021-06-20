@@ -5,12 +5,12 @@ import flask
 from flask import Flask
 from flask_restful import Api
 
-from quiz.CacheStorageRepository import CacheStorageRepository
-from quiz.QuizController import QuizController
-from quiz.StorageRepository import StorageRepository
-# from sql.SQLStorageRepository import SQLStorageRepository
-# from sql.database import db_session
 from quiz.models import Quiz
+from quiz.QuizController import QuizController
+from quiz.CacheStorageRepository import CacheStorageRepository
+from quiz.StorageRepository import StorageRepository
+from sql.SQLStorageRepository import SQLStorageRepository
+from sql.database import db_session
 
 app = Flask(__name__)
 api = Api(app)
@@ -20,8 +20,8 @@ app.config.from_file(config_filename, json.load)
 
 repo: StorageRepository = CacheStorageRepository()
 
-# if app.config['ENV'] in ["production", "integration_test"]:
-#     repo = SQLStorageRepository()
+if app.config['ENV'] in ["production", "integration_test"]:
+    repo = SQLStorageRepository()
 
 
 quizController: QuizController = QuizController(repo)
@@ -40,9 +40,9 @@ def test_quiz_route():
     return {"Status": "Successful", "quiz": quiz.__dict__}, 200
 
 
-# @app.teardown_appcontext
-# def shutdown_session(exception=None):
-#     db_session.remove()
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 if __name__ == '__main__':
     app.run(host=app.config["LISTEN_TO"], debug=app.config["DEBUG"])

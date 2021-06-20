@@ -5,6 +5,5 @@ WORKDIR /app
 
 RUN pip install pipenv
 
-RUN pipenv install --deploy --ignore-pipfile
+RUN pipenv install --system --deploy --ignore-pipfile
 
-CMD ["pipenv", "run", "python", "app.py"]

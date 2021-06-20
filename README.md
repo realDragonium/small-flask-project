@@ -17,13 +17,13 @@ docker-compose up development
 ### Unit tests
 To run the unit tests without any external dependencies: 
 ```
-docker-compose run unit
+docker-compose up unit
 ```
 
 ### Integration tests
 To run the integration tests which has the database as external dependency: 
 ```
-docker-compose run integration
+docker-compose up integration
 ```
 
 

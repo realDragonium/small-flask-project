@@ -6,6 +6,7 @@ services:
     build: .
     ports:
       - 5000:5000
+    command: ["pipenv", "run", "python", "app.py"]
     environment:
       MODE: "production"
       ENV: "production"
@@ -14,6 +15,7 @@ services:
     build: .
     ports:
       - 5000:5000
+    command: ["pipenv", "run", "python", "app.py"]
     environment:
       MODE: "development"
       ENV: "development"
@@ -22,24 +24,28 @@ services:
     build:
       context: .
       dockerfile: unittest.dockerfile
+    command: ["python", "-m", "unittest", "-v", "quiz/test_quiz_controller.py"]
     environment:
       MODE: "unit"
       DATABASE: "MEMORY"
 
   integration:
-    build:
-      context: .
-      dockerfile: unittest.dockerfile
+    build: .
+    command: ["python", "-m", "unittest", "-v", "sql/test_sql_quiz_controller.py"]
     depends_on:
       - integration_db
     environment:
       MODE: "integration"
       DATABASE: "SQL"
+      DB_URL: "integration_db:5432"
+      DB_USER: 'DONT_LEAVE_ME_ALONE'
+      DB_PASS: 'CHANGE_ME'
+
 
   integration_db:
     image: postgres:13.3
     ports:
       - 10432:5432
     environment:
-      POSTGRES_PASSWORD: 'CHANGE_ME'
       POSTGRES_USER: 'DONT_LEAVE_ME_ALONE'
+      POSTGRES_PASSWORD: 'CHANGE_ME'

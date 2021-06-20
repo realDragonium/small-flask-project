@@ -1,4 +1,3 @@
-import os
 import unittest
 from typing import List
 
@@ -101,8 +100,6 @@ class TestQuizController(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    if os.environ["MODE"] == "unit":
-        unittest.skip("integration tests")
     unittest.main()
 
 
