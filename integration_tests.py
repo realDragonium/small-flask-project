@@ -11,7 +11,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     # Timeout so the database has some time to start up when running test in container
-    time.sleep(0.5)
+    time.sleep(5)
 
     repo: StorageRepository = SQLStorageRepository()
 

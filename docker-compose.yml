@@ -7,20 +7,44 @@ services:
     ports:
       - 5000:5000
     command: ["pipenv", "run", "python", "app.py"]
+    networks:
+      - production
     environment:
+      DATABASE: "SQL"
+      DB_URL: "production_db:5432"
+      DB_USER: 'not_admin'
+      DB_PASS: 'Not_My_admin_password'
       MODE: "production"
       ENV: "production"
-
+  production_db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_USER: 'not_admin'
+      POSTGRES_PASSWORD: 'Not_My_admin_password'
+    networks:
+      - production
 
   development:
     build: .
     ports:
       - 5000:5000
-    command: ["pipenv", "run", "python", "app.py"]
+    command: ["python", "app.py"]
+    networks:
+      - development
     environment:
+      DATABASE: "SQL"
+      DB_URL: "development_db:5432"
+      DB_USER: 'dev'
+      DB_PASS: 'toor'
       MODE: "development"
       ENV: "development"
-
+  development_db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_USER: 'dev'
+      POSTGRES_PASSWORD: 'toor'
+    networks:
+      - development
 
   unit:
     build:
@@ -45,7 +69,6 @@ services:
       DB_URL: "integration_db:5432"
       DB_USER: 'DONT_LEAVE_ME_ALONE'
       DB_PASS: 'CHANGE_ME'
-
   integration_db:
     image: postgres:13.3
     environment:
@@ -58,4 +81,7 @@ services:
 networks:
   integration:
     driver: bridge
-    name: integration
+  development:
+    driver: bridge
+  production:
+    driver: bridge

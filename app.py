@@ -3,6 +3,7 @@ import os
 
 import flask
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 
 from quiz.models import Quiz
@@ -14,13 +15,15 @@ from sql.database import db_session
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 config_filename = f"config.{os.environ['MODE']}.json"
 app.config.from_file(config_filename, json.load)
 
 repo: StorageRepository = CacheStorageRepository()
 
-if app.config['ENV'] in ["production", "integration_test"]:
+if app.config['STORAGE'] == "SQL":
     repo = SQLStorageRepository()
 
 

@@ -1,8 +1,0 @@
-{
-  "ENV": "development",
-  "LISTEN_TO": "0.0.0.0",
-  "APPLICATION_ROOT": "/api",
-  "STORAGE": "SQL",
-  "DB_URL": "",
-  "DEBUG": false
-}
