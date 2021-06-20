@@ -36,3 +36,7 @@ class CacheStorageRepository(StorageRepository):
                     break
             loop_counter += 1
         return quizzes
+
+    def teardown_test_data(self):
+        self.storage: Dict[uuid.UUID, Quiz] = {}
+        self.newest_quiz: Quiz = Quiz()

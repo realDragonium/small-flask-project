@@ -9,7 +9,7 @@ username: str = os.environ.get("DB_USER",  "DONT_LEAVE_ME_ALONE")
 password: str = os.environ.get("DB_PASS",  "CHANGE_ME")
 
 
-engine = create_engine(f"postgresql://{username}:{password}@{url}")
+engine = create_engine(f"postgresql://{username}:{password}@{url}", pool_pre_ping=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))

@@ -1,16 +1,22 @@
 import unittest
 from typing import List
 
-from quiz.CacheStorageRepository import CacheStorageRepository
 from quiz.QuizController import QuizController, default_quiz_amount
+from quiz.StorageRepository import StorageRepository
 from quiz.models import Quiz, Question, AnswerOption
 
 
 class TestQuizController(unittest.TestCase):
 
+    def __init__(self, testName, repo: StorageRepository):
+        super(TestQuizController, self).__init__(testName)
+        self.repo: StorageRepository = repo
+
     def setUp(self):
-        self.repo = CacheStorageRepository()
         self.controller: QuizController = QuizController(self.repo)
+
+    def tearDown(self) -> None:
+        self.repo.teardown_test_data()
 
     def create_quiz(self, name: str = "Best quiz") -> Quiz:
         return self.controller.create_quiz(name)
@@ -33,7 +39,7 @@ class TestQuizController(unittest.TestCase):
     def test_get_correct_answer_for_question(self):
         new_quiz: Quiz = self.create_quiz()
         question: Question = create_question()
-        new_quiz.add_question(question)
+        self.controller.add_question_to_quiz(new_quiz.id, question)
 
         correct_answers = self.controller.get_correct_answer_for_question(question.id)
         self.assertEqual(len(correct_answers), 1)
@@ -43,7 +49,7 @@ class TestQuizController(unittest.TestCase):
         question: Question = create_question()
         for answer_option in question.answer_options:
             answer_option.is_correct = True
-        new_quiz.add_question(question)
+        self.controller.add_question_to_quiz(new_quiz.id, question)
 
         correct_answers = self.controller.get_correct_answer_for_question(question.id)
         self.assertEqual(len(correct_answers), 4)
@@ -63,7 +69,6 @@ class TestQuizController(unittest.TestCase):
             self.create_quiz()
 
         quizzes: List[Quiz] = self.controller.get_quizzes(amount=request_amount)
-        print(len(quizzes))
         self.assertEqual(expected_number_of_quizzes, len(quizzes))
 
     def test_get_less_than_request_amount_of_quizzes_when_less_is_available_with_offset(self):
@@ -94,8 +99,6 @@ class TestQuizController(unittest.TestCase):
         self.assertEqual(expected_number_of_quizzes, len(quizzes))
 
 
-if __name__ == '__main__':
-    unittest.main()
 
 
 def create_question() -> Question:

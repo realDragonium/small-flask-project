@@ -11,6 +11,7 @@ services:
       MODE: "production"
       ENV: "production"
 
+
   development:
     build: .
     ports:
@@ -20,20 +21,24 @@ services:
       MODE: "development"
       ENV: "development"
 
+
   unit:
     build:
       context: .
       dockerfile: unittest.dockerfile
-    command: ["python", "-m", "unittest", "-v", "quiz/test_quiz_controller.py"]
+    command: ["python", "test_unit.py"]
     environment:
       MODE: "unit"
       DATABASE: "MEMORY"
 
+
   integration:
     build: .
-    command: ["python", "-m", "unittest", "-v", "sql/test_sql_quiz_controller.py"]
+    command: ["python", "integration_tests.py"]
     depends_on:
       - integration_db
+    networks:
+      - integration
     environment:
       MODE: "integration"
       DATABASE: "SQL"
@@ -41,11 +46,16 @@ services:
       DB_USER: 'DONT_LEAVE_ME_ALONE'
       DB_PASS: 'CHANGE_ME'
 
-
   integration_db:
     image: postgres:13.3
-    ports:
-      - 10432:5432
     environment:
       POSTGRES_USER: 'DONT_LEAVE_ME_ALONE'
       POSTGRES_PASSWORD: 'CHANGE_ME'
+    networks:
+      - integration
+
+
+networks:
+  integration:
+    driver: bridge
+    name: integration

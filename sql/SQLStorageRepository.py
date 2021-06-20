@@ -7,13 +7,14 @@ from sql.database import db_session, init_db
 from sql.sql_models import SQLQuiz, SQLQuestion, SQLAnswerOption
 
 
+def get_sql_quiz(quiz_id: uuid.UUID) -> SQLQuiz:
+    return SQLQuiz.query.filter(SQLQuiz.id == quiz_id).first()
+
+
 class SQLStorageRepository(StorageRepository):
 
     def __init__(self):
         init_db()
-
-    def get_sql_quiz(self, quiz_id: uuid.UUID) -> SQLQuiz:
-        return SQLQuiz.query.filter(SQLQuiz.id == quiz_id).first()
 
     def save_quiz(self, quiz: Quiz):
         sql_quiz: SQLQuiz = quiz_to_sql_quiz(quiz)
@@ -21,7 +22,7 @@ class SQLStorageRepository(StorageRepository):
         db_session.commit()
 
     def get_quiz(self, quiz_id: uuid.UUID) -> Quiz:
-        sql_quiz: SQLQuiz = self.get_sql_quiz(quiz_id)
+        sql_quiz: SQLQuiz = get_sql_quiz(quiz_id)
         return sql_quiz_to_quiz(sql_quiz)
 
     def get_question(self, question_id: uuid.UUID) -> Question:
@@ -29,7 +30,7 @@ class SQLStorageRepository(StorageRepository):
         return sql_question_to_question(sql_question)
 
     def update_quiz(self, quiz: Quiz):
-        old_sql_quiz: SQLQuiz = self.get_sql_quiz(quiz.id)
+        old_sql_quiz: SQLQuiz = get_sql_quiz(quiz.id)
         old_sql_quiz.name = quiz.name
         sql_questions: List[SQLQuestion] = []
         for question in quiz.questions:
@@ -45,6 +46,11 @@ class SQLStorageRepository(StorageRepository):
             quiz: Quiz = sql_quiz_to_quiz(sql_quiz)
             quizzes.append(quiz)
         return quizzes
+
+    def teardown_test_data(self):
+        SQLAnswerOption.query.delete()
+        SQLQuestion.query.delete()
+        SQLQuiz.query.delete()
 
 
 def quiz_to_sql_quiz(quiz: Quiz) -> SQLQuiz:

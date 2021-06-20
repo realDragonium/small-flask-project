@@ -20,3 +20,5 @@ class StorageRepository:
     def get_quizzes(self, offset: int, amount: int) -> List[Quiz]:
         pass
 
+    def teardown_test_data(self):
+        pass
