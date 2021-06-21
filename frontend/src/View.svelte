@@ -40,9 +40,10 @@
         get(`/api/quiz/all?offset=${offset}&amount=${amount}`)
             .then((resp) => {
                 console.log(resp);
-                let tempList = quizzes;
-                tempList.push(...resp.data);
-                quizzes = tempList;
+                // let tempList = quizzes;
+                // tempList.push(...resp.data);
+                // quizzes = tempList;
+                quizzes = [...quizzes, ...resp.data]
                 offset += amount;
             })
             .catch((err) => {
@@ -70,5 +71,6 @@
     article {
         width: max(50%, 520px);
         display: grid;
+        margin: 0 auto;
     }
 </style>

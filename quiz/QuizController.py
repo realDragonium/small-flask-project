@@ -17,6 +17,10 @@ class QuizController:
         self.repository.save_quiz(new_quiz)
         return new_quiz
 
+    def add_questions_to_quiz(self, quiz_id: uuid.UUID, questions: List[Question]) -> None:
+        for question in questions:
+            self.add_question_to_quiz(quiz_id, question)
+
     def add_question_to_quiz(self, quiz_id: uuid.UUID, question: Question) -> None:
         quiz = self.repository.get_quiz(quiz_id)
         quiz.add_question(question)

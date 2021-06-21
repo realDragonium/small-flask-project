@@ -29,7 +29,7 @@ if app.config['STORAGE'] == "SQL":
     repo = SQLStorageRepository()
 
 
-quizController: QuizController = QuizController(repo)
+quiz_controller: QuizController = QuizController(repo)
 
 class Encoder(json.JSONEncoder):
     def default(self, obj):
@@ -51,7 +51,7 @@ def hello_world():
 @app.route("/api/quiz", methods=['POST'])
 def quiz_create_route():
     quiz_name: str = flask.request.get_json()['name']
-    quiz: Quiz = quizController.create_quiz(quiz_name)
+    quiz: Quiz = quiz_controller.create_quiz(quiz_name)
     app.logger.info(f'"{quiz.name}" successfully created')
     return {"status": "success", "quiz": quiz.__dict__}, 200
 
@@ -61,13 +61,23 @@ def quiz_get_route():
     amount: int = int(flask.request.args.get("amount"))
     offset: int = int(flask.request.args.get("offset"))
     app.logger.info(f'Numbers of quizzes requested - Amount: {amount} & Offset: {offset}')
-    quizzes: List[Quiz] = quizController.get_quizzes(offset, amount)
+    quizzes: List[Quiz] = quiz_controller.get_quizzes(offset, amount)
     response = app.response_class(
         response=json.dumps(quizzes, cls=Encoder),
         status=200,
         mimetype='application/json'
     )
     return response
+
+
+@app.route("/api/question", methods=['POST'])
+def quiz_get_route():
+    data = flask.request.get_json()
+    quiz_id: UUID = data['quiz.id']
+    questions: List[Question] = data['questions']
+    quiz_controller.add_questions_to_quiz(quiz_id, questions)
+    return {"status": "success"}, 200
+
 
 
 @app.teardown_appcontext

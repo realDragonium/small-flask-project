@@ -106,6 +106,12 @@ class TestQuizController(unittest.TestCase):
         quizzes: List[Quiz] = self.controller.get_quizzes(None, None)
         self.assertEqual(expected_number_of_quizzes, len(quizzes))
 
+    def test_add_multiple_questions_to_quiz(self):
+        new_quiz: Quiz = self.create_quiz()
+        questions: List[Question] = [create_question(), create_question(), create_question()]
+        self.controller.add_questions_to_quiz(new_quiz.id, questions)
+        post_insert_quiz = self.repo.get_quiz(new_quiz.id)
+        self.assertEqual(3, len(post_insert_quiz.questions))
 
 
 def create_question() -> Question:
