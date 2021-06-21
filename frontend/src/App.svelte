@@ -1,6 +1,7 @@
 <script>
 	import Home from "./Home.svelte";
 	import Create from "./Create.svelte";
+	import View from "./View.svelte";
 
 	$: current_page = "HOME";
 
@@ -13,7 +14,9 @@
 	{#if current_page == "HOME"}
 		<Home on:page={changePage} />
 	{:else if current_page == "CREATE"}
-		<Create />
+		<Create on:page={changePage} />
+	{:else if current_page == "VIEW"}
+		<View on:page={changePage} />
 	{/if}
 </main>
 

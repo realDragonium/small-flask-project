@@ -1,5 +1,6 @@
 import json
 import os
+from typing import List
 
 import flask
 from flask import Flask
@@ -35,19 +36,35 @@ def hello_world():
 
 
 @app.route("/api/quiz", methods=['POST'])
-
-def test_quiz_route():
-    app.logger.info(flask.request.get_json())
+def quiz_create_route():
     quiz_name: str = flask.request.get_json()['name']
     quiz: Quiz = quizController.create_quiz(quiz_name)
     app.logger.info(f'"{quiz.name}" successfully created')
-    app.logger.info(f'"{quiz.id}" testing uuid generation')
-    return {"Status": "Successful", "quiz": quiz.__dict__}, 200
+    return {"status": "success", "quiz": quiz.__dict__}, 200
+
+
+@app.route("/api/quiz/all", methods=['GET'])
+def quiz_get_route():
+    amount: int = 0
+    offset: int = 0
+    data: json = flask.request.get_json()
+    if data is not None:
+        amount: int = data["amount"]
+        offset: int = data["offset"]
+    app.logger.info(f'Numbers of quizzes requested - Amount: {amount} & Offset: {offset}')
+    quizzes: List[Quiz] = quizController.get_quizzes(offset, amount)
+    response = app.response_class(
+        response=json.dumps(quizzes),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
+
 
 if __name__ == '__main__':
     app.run(host=app.config["LISTEN_TO"], debug=app.config["DEBUG"])

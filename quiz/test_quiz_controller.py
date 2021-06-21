@@ -98,6 +98,13 @@ class TestQuizController(unittest.TestCase):
         quizzes: List[Quiz] = self.controller.get_quizzes(offset=-5, amount=request_amount)
         self.assertEqual(expected_number_of_quizzes, len(quizzes))
 
+    def test_get_quizzes_with_None(self):
+        expected_number_of_quizzes: int = default_quiz_amount
+        for i in range(30):
+            self.create_quiz()
+
+        quizzes: List[Quiz] = self.controller.get_quizzes(None, None)
+        self.assertEqual(expected_number_of_quizzes, len(quizzes))
 
 
 

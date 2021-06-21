@@ -31,9 +31,9 @@ class QuizController:
         return correct_answers
 
     def get_quizzes(self, offset: int = 0, amount: int = default_quiz_amount):
-        if offset < 0:
+        if offset is None or offset < 0:
             offset = 0
-        if amount < 0:
+        if amount is None or amount < 0:
             amount = default_quiz_amount
         quizzes: List[Quiz] = self.repository.get_quizzes(offset, amount)
         return quizzes

@@ -3,12 +3,14 @@
 ## How to run
 
 ### Production
+Go to http://localhost:5000 to see the development environment (which is similar if not the same as development atm)
 To run production of this use: 
 ```
 docker-compose up production
 ```
 
 ### Development
+Go to http://localhost:5001 to see the development environment (which is similar if not the same as production atm)
 To run development of this use: 
 ```
 docker-compose up development 
@@ -35,5 +37,4 @@ This is a small quiz websites where you can do some simple things. Here are some
 - Do I want them to be created in a single go or can they also be updated? 
 - You also need to be able to check your answers, at the end?
 - We should also log it when someone finished a quiz
-- So we also kinda need accounts
 

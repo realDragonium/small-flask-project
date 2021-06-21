@@ -3,38 +3,23 @@
     import { post } from "axios";
     const dispatch = createEventDispatcher();
 
-    let value = "Best quiz";
+    let quizName = "Best quiz";
+
+    $: notification = "";
 
     async function create() {
-        const testData = JSON.stringify({ name: "Best Test" });
-
-        // fetch("/api/quiz", {
-        //     method: "POST",
-        //     body: JSON.stringify(data),
-        // }).then((res) => {
-        //     console.log("Request complete! response:", res);
-        //     answer = JSON.parse(res.json());
-        //     console.log(answer);
-        // });
-        // const res = await fetch("/api/quiz", {
-        //     method: "POST",
-        //     body: JSON.stringify({ name: "Best Test" }),
-        // });
-
-        post("/api/quiz", testData)
+        post("/api/quiz", { name: quizName })
             .then((resp) => {
                 console.log(resp);
+                if (resp.data.status == "success") {
+                    console.log("changed notification value!");
+                    notification = "Quiz created!";
+                    notificationTimer();
+                }
             })
             .catch((err) => {
                 console.log(err);
             });
-
-        // const json = await res.json();
-        // let result = JSON.stringify(json);
-        // console.log(result);
-        // dispatch("page", {
-        // text: "CREATE",
-        // });
     }
 
     function goBack() {
@@ -42,11 +27,21 @@
             text: "HOME",
         });
     }
+
+    function notificationTimer() {
+        setTimeout(() => {
+            notification = "";
+            console.log("changed notification back!");
+        }, 4000);
+    }
 </script>
 
 <article>
     <h2>Create here your quiz!</h2>
-    <input {value} type="text" />
+    {#if notification != ""}
+        <p class="notification">{notification}</p>
+    {/if}
+    <input bind:value={quizName} type="text" />
     <section>
         <button class="back" on:click={goBack}>Go back</button>
         <button class="create" on:click={create}>Create!</button>
@@ -61,8 +56,16 @@
         margin: auto auto;
     }
 
+    .notification {
+        font-size: 1.5em;
+        color: green;
+        font-weight: 400;
+        margin-bottom: -15px;
+    }
+
     h2 {
         margin: 25px auto;
+        font-size: 3em;
     }
 
     input {
