@@ -40,8 +40,9 @@
         get(`/api/quiz/all?offset=${offset}&amount=${amount}`)
             .then((resp) => {
                 console.log(resp);
-                // For some reason it only updates when you overwrite the original array and not when you push. Need some more investigation
-                quizzes = resp.data;
+                let tempList = quizzes;
+                tempList.push(...resp.data);
+                quizzes = tempList;
                 offset += amount;
             })
             .catch((err) => {
