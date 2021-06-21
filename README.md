@@ -2,6 +2,11 @@
 
 ## How to run
 
+### Reload a single container
+```
+   docker-compose up -d --build [service name]
+```
+
 ### Production
 Go to http://localhost:5000 to see the development environment (which is similar if not the same as development atm)
 To run production of this use: 

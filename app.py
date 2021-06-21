@@ -1,13 +1,14 @@
 import json
 import os
 from typing import List
+from uuid import UUID
 
 import flask
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
 
-from quiz.models import Quiz
+from quiz.models import Quiz, Question, AnswerOption
 from quiz.QuizController import QuizController
 from quiz.CacheStorageRepository import CacheStorageRepository
 from quiz.StorageRepository import StorageRepository
@@ -30,6 +31,18 @@ if app.config['STORAGE'] == "SQL":
 
 quizController: QuizController = QuizController(repo)
 
+class Encoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            return obj.hex
+        if isinstance(obj, Quiz):
+            return obj.__dict__
+        if isinstance(obj, Question):
+            return obj.__dict__
+        if isinstance(obj, AnswerOption):
+            return obj.__dict__
+        return json.JSONEncoder.default(self, obj)
+
 @app.route('/')
 def hello_world():
     return 'Hello World!!!!'
@@ -45,16 +58,12 @@ def quiz_create_route():
 
 @app.route("/api/quiz/all", methods=['GET'])
 def quiz_get_route():
-    amount: int = 0
-    offset: int = 0
-    data: json = flask.request.get_json()
-    if data is not None:
-        amount: int = data["amount"]
-        offset: int = data["offset"]
+    amount: int = int(flask.request.args.get("amount"))
+    offset: int = int(flask.request.args.get("offset"))
     app.logger.info(f'Numbers of quizzes requested - Amount: {amount} & Offset: {offset}')
     quizzes: List[Quiz] = quizController.get_quizzes(offset, amount)
     response = app.response_class(
-        response=json.dumps(quizzes),
+        response=json.dumps(quizzes, cls=Encoder),
         status=200,
         mimetype='application/json'
     )

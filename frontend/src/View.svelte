@@ -16,41 +16,32 @@
         });
     }
 
-    $: quizzes = [
-        {
-            name: "Hello there",
-            id: "1",
-            questions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-        },
-        {
-            name: "Hello there2",
-            id: "2",
-            questions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-        },
-        {
-            name: "Hello there3",
-            id: "3",
-            questions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-        },
-        {
-            name: "Hello there4",
-            id: "4",
-            questions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-        },
-    ];
+    let quizzes = [];
+
+    setTimeout(() => {
+        quizzes = [
+            {
+                name: "Hello there",
+                id: "1",
+                questions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+            },
+            {
+                name: "Hello there2",
+                id: "2",
+                questions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+            },
+        ];
+    }, 1000);
 
     let offset = 0;
     let amount = 5;
 
     async function getQuizes() {
-        let data = {
-            amount,
-            offset,
-        };
-        get("/api/quiz/all", data)
+        get(`/api/quiz/all?offset=${offset}&amount=${amount}`)
             .then((resp) => {
                 console.log(resp);
-                quizzes = resp.data.response;
+                // For some reason it only updates when you overwrite the original array and not when you push. Need some more investigation
+                quizzes = resp.data;
                 offset += amount;
             })
             .catch((err) => {
