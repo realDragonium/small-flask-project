@@ -2,10 +2,20 @@ version: "3.9"
 
 
 services:
-  production:
-    build: .
+  prodction:
+    image: nginx
+    volumes:
+      - "./nginx/production.conf:/etc/nginx/conf.d/production.conf"
     ports:
-      - 5000:5000
+      - "5000:5000"
+    depends_on:
+      - production_db
+      - production_svelte
+      - production_flask
+    networks:
+      - production
+  production_flask:
+    build: .
     command: ["pipenv", "run", "python", "app.py"]
     networks:
       - production
@@ -23,11 +33,26 @@ services:
       POSTGRES_PASSWORD: 'Not_My_admin_password'
     networks:
       - production
+  production_svelte:
+    build: frontend/.
+    networks:
+      - production
+
 
   development:
-    build: .
+    image: nginx
+    volumes:
+      - "./nginx/development.conf:/etc/nginx/conf.d/development.conf"
     ports:
-      - 5000:5000
+      - "5001:5001"
+    depends_on:
+      - development_db
+      - development_svelte
+      - development_flask
+    networks:
+      - development
+  development_flask:
+    build: .
     command: ["python", "app.py"]
     networks:
       - development
@@ -45,6 +70,11 @@ services:
       POSTGRES_PASSWORD: 'toor'
     networks:
       - development
+  development_svelte:
+    build: frontend/.
+    networks:
+      - development
+
 
   unit:
     build:

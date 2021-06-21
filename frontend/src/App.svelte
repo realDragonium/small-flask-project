@@ -5,8 +5,6 @@
 	$: current_page = "HOME";
 
 	function changePage(event) {
-		console.log("TESTING APP");
-		console.log(event);
 		current_page = event.detail.text;
 	}
 </script>

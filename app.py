@@ -35,8 +35,10 @@ def hello_world():
 
 
 @app.route("/api/quiz", methods=['POST'])
+
 def test_quiz_route():
-    quiz_name: str = flask.request.json['name']
+    app.logger.info(flask.request.get_json())
+    quiz_name: str = flask.request.get_json()['name']
     quiz: Quiz = quizController.create_quiz(quiz_name)
     app.logger.info(f'"{quiz.name}" successfully created')
     app.logger.info(f'"{quiz.id}" testing uuid generation')

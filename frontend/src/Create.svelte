@@ -1,24 +1,40 @@
 <script>
     import { createEventDispatcher } from "svelte";
+    import { post } from "axios";
     const dispatch = createEventDispatcher();
 
     let value = "Best quiz";
 
-    function create() {
-        let data = {
-            name: value,
-        };
+    async function create() {
+        const testData = JSON.stringify({ name: "Best Test" });
 
-        fetch("http://localhost:5000/api/quiz", {
-            method: "POST",
-            body: JSON.stringify(data),
-        }).then((res) => {
-            console.log("Request complete! response:", res);
-        });
+        // fetch("/api/quiz", {
+        //     method: "POST",
+        //     body: JSON.stringify(data),
+        // }).then((res) => {
+        //     console.log("Request complete! response:", res);
+        //     answer = JSON.parse(res.json());
+        //     console.log(answer);
+        // });
+        // const res = await fetch("/api/quiz", {
+        //     method: "POST",
+        //     body: JSON.stringify({ name: "Best Test" }),
+        // });
 
-        dispatch("page", {
-            text: "CREATE",
-        });
+        post("/api/quiz", testData)
+            .then((resp) => {
+                console.log(resp);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        // const json = await res.json();
+        // let result = JSON.stringify(json);
+        // console.log(result);
+        // dispatch("page", {
+        // text: "CREATE",
+        // });
     }
 
     function goBack() {
