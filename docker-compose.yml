@@ -65,6 +65,8 @@ services:
       ENV: "development"
   development_db:
     image: postgres:13.3
+    volumes:
+      - "development_db_volume:/var/lib/postgresql/data"
     environment:
       POSTGRES_USER: 'dev'
       POSTGRES_PASSWORD: 'toor'
@@ -115,3 +117,6 @@ networks:
     driver: bridge
   production:
     driver: bridge
+
+volumes:
+  development_db_volume:

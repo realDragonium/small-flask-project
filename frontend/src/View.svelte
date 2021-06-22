@@ -4,9 +4,9 @@
     import QuizCard from "./component/QuizCard.svelte";
     const dispatch = createEventDispatcher();
 
-    function create() {
+    function home() {
         dispatch("page", {
-            text: "CREATE",
+            text: "HOME",
         });
     }
 
@@ -40,10 +40,7 @@
         get(`/api/quiz/all?offset=${offset}&amount=${amount}`)
             .then((resp) => {
                 console.log(resp);
-                // let tempList = quizzes;
-                // tempList.push(...resp.data);
-                // quizzes = tempList;
-                quizzes = [...quizzes, ...resp.data]
+                quizzes = [...quizzes, ...resp.data];
                 offset += amount;
             })
             .catch((err) => {
@@ -57,6 +54,7 @@
 </svelte:head>
 
 <article>
+    <button on:click={home}>Go back</button>
     <button on:click={getQuizes}>
         Click to fetch new quizzes (if there are any)
     </button>

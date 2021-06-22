@@ -1,7 +1,7 @@
 import json
 import os
 from typing import List
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import flask
 from flask import Flask
@@ -71,10 +71,18 @@ def quiz_get_route():
 
 
 @app.route("/api/question", methods=['POST'])
-def quiz_get_route():
+def create_question_route():
     data = flask.request.get_json()
-    quiz_id: UUID = data['quiz.id']
-    questions: List[Question] = data['questions']
+    app.logger.info(data)
+    quiz_id: UUID = data['quiz']['id']
+    questions: List[Question] = []
+    for question_dict in data['questions']:
+        answer_options: List[AnswerOption] = []
+        for answer_option_dict in question_dict['answer_options']:
+            answer_option: AnswerOption = AnswerOption(answer_option_dict['text'], answer_option_dict['is_correct'], uuid4())
+            answer_options.append(answer_option)
+        question: Question = Question(question_dict['question'], answer_options, uuid4())
+        questions.append(question)
     quiz_controller.add_questions_to_quiz(quiz_id, questions)
     return {"status": "success"}, 200
 
